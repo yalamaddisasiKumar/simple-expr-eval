@@ -1,0 +1,33 @@
+{
+  "name": "simple-expr-eval",
+  "version": "0.1.0",
+  "description": "Ultra simple expression evaluator",
+  "module": "dist/index.mjs",
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.mjs",
+  "umd:main": "dist/index.umd.js",
+  "source": "src/index.ts",
+  "typings": "index.d.ts",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js",
+    "default": "./dist/index.mjs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "bundle",
+    "bundle": "microbundle -f es,cjs,umd"
+  },
+  "devDependencies": {
+    "microbundle": "^0.15.0",
+    "typescript": "^4.5.5"
+  },
+  "keywords": [
+    "simple",
+    "maths",
+    "expression",
+    "evaluator"
+  ],
+  "author": "sasikumar yalamaddi",
+  "license": "ISC"
+}

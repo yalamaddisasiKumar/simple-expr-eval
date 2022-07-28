@@ -18,6 +18,8 @@
     "build": "bundle",
     "bundle": "microbundle -f es,cjs,umd"
   },
+  "homepage": "https://github.com/yalamaddisasiKumar/simple-expr-eval",
+  "repository": "yalamaddisasiKumar/simple-expr-eval",
   "devDependencies": {
     "microbundle": "^0.15.0",
     "typescript": "^4.5.5"
@@ -29,5 +31,5 @@
     "evaluator"
   ],
   "author": "sasikumar yalamaddi",
-  "license": "GNU"
+  "license": "GPL-3.0"
 }

@@ -5,6 +5,7 @@ enum Token{
     Multi,
     Divide,
     Caret,
+    Modulus,
     LeftPerm,
     RightPerm,
     Num,
@@ -16,7 +17,9 @@ enum TokenValue{
     Minus = '-',
     Star = '*',
     ForwardSlash = '/',
-    Caret = '^',
+    // Caret = '^',
+    Caret = '**',
+    Modulus = "%",
     LeftPerm = '(',
     RightPerm = ')'
 }
@@ -80,8 +83,8 @@ type TokenObj = {
 // type Chars =  Record< TokenValue, string>
 
 type ValidChars = TokenValue | number ;
-type ArthematicToken = Token.Add | Token.Sub | Token.Multi | Token.Divide | Token.Caret
-type ArthematicOpertor =  "add" | "sub" | "multi" | "div" | "power";
+type ArthematicToken = Token.Add | Token.Sub | Token.Multi | Token.Divide | Token.Caret | Token.Modulus
+type ArthematicOpertor =  "add" | "sub" | "multi" | "div" | "power" | "modulus";
 
 type AllOpType = ArthematicOpertor | "plus" | "minus" | "perm" | "num" | "undefined";
 
@@ -114,6 +117,7 @@ type LeftWithPrevOp = Left & {
 function getOpeTypePrecedence(opType: AllOpType){
     switch(opType){
         case "power": return 3;
+        case "modulus": return 2
         case "multi": return 2;
         case "div": return 2;
         case "add": return 1;
@@ -136,6 +140,10 @@ function mult(x: number,y: number){
 
 function div(x: number,y: number){
     return x/y;
+}
+
+function modulus(x: number, y: number){
+    return x%y;
 }
 
 function pow(x: number,y: number){
@@ -163,6 +171,7 @@ const getFun  = {
     "sub":sub,
     "multi":mult,
     "div":div,
+    "modulus": modulus, 
     "power":pow,
     "num":num,
     "minus": minus,
@@ -175,7 +184,9 @@ function getParsedTokens(input: string): TokenObj[] | Error{
     const tokens: TokenObj[]=[];
     input = input.replace(/\s/g,'');
     const tokenChars = input.split('') as Array<ValidChars>
-    for(let i=0;i<tokenChars.length;i++){
+    // for(let i=0;i<tokenChars.length;i++){
+    let i=0;
+    while(i<tokenChars.length){
         const char= tokenChars[i];
         let validToken: undefined | Token = undefined;
         let n= Number(char);
@@ -207,6 +218,13 @@ function getParsedTokens(input: string): TokenObj[] | Error{
                 };
                 case TokenValue.Star : {
                     validToken = Token.Multi
+                    if(i<tokenChars.length-1){
+                        const nextChar = tokenChars[i+1];
+                        if(char + nextChar === TokenValue.Caret){
+                            validToken = Token.Caret;
+                            i++;
+                        }
+                    }
                     break;   
                 };
                 case TokenValue.ForwardSlash : {
@@ -215,6 +233,10 @@ function getParsedTokens(input: string): TokenObj[] | Error{
                 };
                 case TokenValue.Caret : {
                     validToken = Token.Caret
+                    break;   
+                };
+                case TokenValue.Modulus : {
+                    validToken = Token.Modulus
                     break;   
                 };
                 case TokenValue.LeftPerm : {
@@ -226,7 +248,7 @@ function getParsedTokens(input: string): TokenObj[] | Error{
                     break;   
                 };
                 default: {
-                    console.log("invalid char ",char)
+                    // console.log("invalid char ",char)
                     return Error("Invalid expression")
                 }
             }
@@ -236,7 +258,7 @@ function getParsedTokens(input: string): TokenObj[] | Error{
                 })
             }
         }
-
+        i++;
     }
     return tokens;
 }
@@ -273,6 +295,9 @@ function getArthematicOpertor(token:ArthematicToken):ArthematicOpertor{
         };
         case Token.Caret : {
             return "power"
+        };
+        case Token.Modulus : {
+            return "modulus"
         };
     }
 }
@@ -355,7 +380,7 @@ function getAbstractTree(tokenObjs: TokenObj[], left : LeftWithPrevOp = { isLeft
         }
     }else{
         const token = tokenObj.token;
-        if(Token.Add == token || Token.Sub == token || Token.Divide == token || Token.Multi == token || Token.Caret == token ){
+        if(Token.Add == token || Token.Sub == token || Token.Divide == token || Token.Multi == token || Token.Caret == token || Token.Modulus == token ){
             // const nextTokenObj = tokenObjs[0];
             const rightTree = getAbstractTree(tokenObjs);
             // if(rightTree)

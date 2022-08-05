@@ -82,7 +82,7 @@ type TokenObj = {
 
 // type Chars =  Record< TokenValue, string>
 
-type ValidChars = TokenValue | number ;
+type ValidChars = TokenValue | "." | "," ;
 type ArthematicToken = Token.Add | Token.Sub | Token.Multi | Token.Divide | Token.Caret | Token.Modulus
 type ArthematicOpertor =  "add" | "sub" | "multi" | "div" | "power" | "modulus";
 
@@ -184,7 +184,6 @@ function getParsedTokens(input: string): TokenObj[] | Error{
     const tokens: TokenObj[]=[];
     input = input.replace(/\s/g,'');
     const tokenChars = input.split('') as Array<ValidChars>
-    // for(let i=0;i<tokenChars.length;i++){
     let i=0;
     while(i<tokenChars.length){
         const char= tokenChars[i];
@@ -192,10 +191,20 @@ function getParsedTokens(input: string): TokenObj[] | Error{
         let n= Number(char);
         if(char && !isNaN(n)){
             let j=i+1;
+            let value = char;
             let nextChar = tokenChars[j];
             let nextCharNumber = Number(nextChar);
-            while(nextChar && !isNaN(nextCharNumber)){
-                n=n*10 + nextCharNumber;
+            let isFloating = false;
+            let isLastCommaChar =false
+            while(nextChar && (!isNaN(nextCharNumber) || (nextChar === '.' && !isFloating  && !isLastCommaChar ) || (nextChar === ',' && !isFloating && !isLastCommaChar))){
+                // n=n*10 + nextCharNumber;
+                if(nextChar != ','){
+                    value += nextChar;
+                    isLastCommaChar = false
+                }else{
+                    isLastCommaChar = true;
+                }
+                isFloating = isFloating || nextChar == '.';
                 j++
                 i++;
                 nextChar = tokenChars[j];
@@ -204,7 +213,7 @@ function getParsedTokens(input: string): TokenObj[] | Error{
             validToken = Token.Num;
             tokens.push({
                 token: validToken,
-                data: n,
+                data: Number(value),
             })
         }else {
             switch(char){

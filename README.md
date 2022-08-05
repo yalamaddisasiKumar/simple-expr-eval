@@ -1,5 +1,5 @@
 ## simple-expr-eval
- Ultra simple expression evaluator 
+ Ultra simple expression evaluator with zero dependencies. wrote in Typescript. Build with own token generator, parser, and AST.
 ## install
     npm i simple-expr-eval
           (or)

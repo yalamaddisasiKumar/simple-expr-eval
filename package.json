@@ -1,6 +1,6 @@
 {
   "name": "simple-expr-eval",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Ultra simple expression evaluator with zero dependencies. wrote in Typescript. Build with own token generator, parser, and AST.",
   "module": "dist/index.mjs",
   "main": "dist/index.js",

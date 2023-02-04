@@ -189,14 +189,14 @@ function getParsedTokens(input: string): TokenObj[] | Error{
         const char= tokenChars[i];
         let validToken: undefined | Token = undefined;
         let n= Number(char);
-        if(char && !isNaN(n)){
+        if(char && !Number.isNaN(n)){
             let j=i+1;
             let value = char;
             let nextChar = tokenChars[j];
             let nextCharNumber = Number(nextChar);
             let isFloating = false;
             let isLastCommaChar =false
-            while(nextChar && (!isNaN(nextCharNumber) || (nextChar === '.' && !isFloating  && !isLastCommaChar ) || (nextChar === ',' && !isFloating && !isLastCommaChar))){
+            while(nextChar && (!Number.isNaN(nextCharNumber) || (nextChar === '.' && !isFloating  && !isLastCommaChar ) || (nextChar === ',' && !isFloating && !isLastCommaChar))){
                 // n=n*10 + nextCharNumber;
                 if(nextChar != ','){
                     value += nextChar;
@@ -445,11 +445,31 @@ function getValueFromAST(t: TreeNode) : number{
     }
 }
 
+function preProcessStringExpression(expression: string){
+    const len = expression.length;
+    const newExpression: string[] = expression.split('').map((ch, i)=>{
+        if(i+1<len){
+            const nextCh = expression[i+1];
+            const numberOfCh = Number(ch);
+            const numberOfNextCh = Number(nextCh);
+            if(!Number.isNaN(numberOfCh) && nextCh=='('){
+                return ch+"*"
+            }
+            if(!Number.isNaN(numberOfNextCh) && ch==')'){
+                return ")*";
+            }
+        }
+        return ch;
+    })
+    let m = newExpression.join('')
+    return m;
+}
+
 export function evaluate(expression: string){
     if(typeof(expression) !== "string"){
         return Error("Invalid expression type")
     }
-    const tokensOrError = getParsedTokens(expression);
+    const tokensOrError = getParsedTokens(preProcessStringExpression(expression));
     if(tokensOrError instanceof Error){
         return tokensOrError;
     }
